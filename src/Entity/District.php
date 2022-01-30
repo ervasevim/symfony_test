@@ -6,7 +6,7 @@ use App\Repository\DistrictRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(rphp bin/console doctrine:migrations:migrateepositoryClass=DistrictRepository::class)
+ * @ORM\Entity(repositoryClass=DistrictRepository::class)
  */
 class District
 {
