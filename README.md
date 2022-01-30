@@ -1,5 +1,10 @@
 # PATH CHALLENGE
 
+### POSTMAN COLLECTION
+---
+https://documenter.getpostman.com/view/9260602/UVeCRTx7
+
+
 ### Requirements
 ---
 
