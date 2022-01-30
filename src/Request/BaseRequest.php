@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Request;
+
+use App\Service\ResponseService;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+
+abstract class BaseRequest
+{
+    protected  $validator;
+
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+        $this->populate();
+
+        if ($this->autoValidateRequest()) {
+            $this->validate();
+        }
+    }
+    protected function autoValidateRequest(): bool
+    {
+        return true;
+    }
+
+    public function validate()
+    {
+        $errors = $this->validator->validate($this);
+
+        $messages = ['message' => 'validation_failed', 'errors' => []];
+
+        $messages['success'] = false;
+        $messages['status'] = 422;
+        /** @var \Symfony\Component\Validator\ConstraintViolation  */
+        foreach ($errors as $message) {
+            $messages['errors'][] = [
+                'property' => $message->getPropertyPath(),
+                'value' => $message->getInvalidValue(),
+                'message' => $message->getMessage(),
+            ];
+        }
+
+        if (count($messages['errors']) > 0) {
+            $response = new JsonResponse($messages, 422);
+            $response->send();
+
+            exit;
+        }
+    }
+    public function getRequest(): Request
+    {
+        return Request::createFromGlobals();
+    }
+
+    protected function populate(): void
+    {
+        foreach ($this->getRequest()->toArray() as $property => $value) {
+            if (property_exists($this, $property)) {
+                $this->{$property} = $value;
+            }
+        }
+    }
+}

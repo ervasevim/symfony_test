@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use App\Request\ProductRequest;
+use App\Request\ProductPutRequest;
 use App\Service\ResponseService;
 use App\Validator\ProductValidator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,6 +13,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ProductController extends AbstractController
@@ -23,7 +28,7 @@ class ProductController extends AbstractController
      * ProductController constructor.
      * @param $productRepository
      */
-    public function __construct(ProductRepository $productRepository, ProductValidator $productValidator)
+    public function __construct(ProductRepository $productRepository, ProductRequest $productValidator)
     {
         $this->productRepository = $productRepository;
         $this->productValidator = $productValidator;
@@ -53,9 +58,9 @@ class ProductController extends AbstractController
     /**
      * @Route("/api/product", methods={"POST"}, name="product.store")
      */
-    public function store(Request $request): Response
+    public function store(ProductRequest $request): Response
     {
-        $data = $request->toArray();
+        $data = $request->getRequest()->toArray();
         try {
             $product = $this->productRepository->create($data);
         }catch (\Exception $e) {
@@ -90,9 +95,9 @@ class ProductController extends AbstractController
     /**
      * @Route("/api/product/{id}", methods={"PUT"}, name="product.update")
      */
-    public function update(Request $request, int $id): Response
+    public function update(ProductRequest $request, int $id): Response
     {
-        $data = $request->toArray();
+        $data = $request->getRequest()->toArray();
         try {
             $product = $this->productRepository->find($id);
             if (!$product) {

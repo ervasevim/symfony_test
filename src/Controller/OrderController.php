@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Order;
 use App\Repository\OrderRepository;
+use App\Request\OrderRequest;
+use App\Request\OrderPutRequest;
 use App\Service\OrderService;
 use App\Service\ResponseService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -52,9 +54,9 @@ class OrderController extends AbstractController
     /**
      * @Route("/api/order", methods={"POST"}, name="order.store")
      */
-    public function store(Request $request): Response
+    public function store(OrderRequest $request): Response
     {
-        $data = $request->toArray();
+        $data = $request->getRequest()->toArray();
         $data['customer'] = $this->getUser();
 
         try {
@@ -90,9 +92,9 @@ class OrderController extends AbstractController
     /**
      * @Route("/api/order/{id}", methods={"PUT"}, name="order.update")
      */
-    public function update(Request $request, int $id): Response
+    public function update(OrderRequest $request, int $id): Response
     {
-        $data = $request->toArray();
+        $data = $request->getRequest()->toArray();
         $data['customer'] = $this->getUser();
         try {
             $order = $this->orderRepository->find($id);
