@@ -8,8 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=OrderItemRepository::class)
  */
-class OrderItem
+class OrderItem implements \JsonSerializable
 {
+    public $fillable = ['order', 'product', 'price', 'quantity'];
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -44,24 +45,24 @@ class OrderItem
         return $this->id;
     }
 
-    public function getOrderId(): ?Order
+    public function getOrder(): ?Order
     {
         return $this->order;
     }
 
-    public function setOrderId(?Order $order): self
+    public function setOrder(?Order $order): self
     {
         $this->order = $order;
 
         return $this;
     }
 
-    public function getProductId(): ?Product
+    public function getProduct(): ?Product
     {
         return $this->product;
     }
 
-    public function setProductId(?Product $product): self
+    public function setProduct(?Product $product): self
     {
         $this->product = $product;
 
@@ -90,5 +91,15 @@ class OrderItem
         $this->quantity = $quantity;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id'        => $this->id,
+            'product'   => $this->product,
+            'price'     => $this->price,
+            'quantity'  => $this->quantity,
+        ];
     }
 }

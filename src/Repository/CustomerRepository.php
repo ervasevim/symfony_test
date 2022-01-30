@@ -24,6 +24,7 @@ class CustomerRepository extends ServiceEntityRepository implements PasswordUpgr
 
     public function __construct(ManagerRegistry $registry, UserPasswordEncoderInterface $passwordEncoder)
     {
+        $this->passwordEncoder = $passwordEncoder;
         parent::__construct($registry, Customer::class);
     }
 

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Address;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use function Sodium\add;
 
 /**
  * @method Address|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +20,27 @@ class AddressRepository extends ServiceEntityRepository
         parent::__construct($registry, Address::class);
     }
 
-    // /**
-    //  * @return Address[] Returns an array of Address objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findOrCreate($data)
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $address = $this->findOneBy([
+            'customer' => $data['customer'],
+            'country' => $data['country']->getId(),
+            'city' => $data['city']->getId(),
+            'district' => $data['district']->getId(),
+        ]);
 
-    /*
-    public function findOneBySomeField($value): ?Address
-    {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if (!$address) {
+            $address = new Address();
+            $address->setFullAddress($data['full_address']);
+            $address->setCustomer($data['customer']);
+            $address->setCountry($data['country']);
+            $address->setCity($data['city']);
+            $address->setDistrict($data['district']);
+
+            $this->_em->persist($address);
+            $this->_em->flush();
+        }
+
+        return $address;
     }
-    */
 }

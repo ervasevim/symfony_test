@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=AddressRepository::class)
  */
-class Address
+class Address implements \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -56,6 +56,24 @@ class Address
      */
     private $updated_at;
 
+    /**
+     * Address constructor.
+     */
+    public function __construct()
+    {
+        $this->updateTimestamps();
+    }
+
+    public function updateTimestamps(): void
+    {
+        $now = new \DateTimeImmutable();
+        $this->setUpdatedAt($now);
+        if ($this->getCreatedAt() === null) {
+            $this->setCreatedAt($now);
+        }
+
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -66,7 +84,7 @@ class Address
         return $this->customer;
     }
 
-    public function setCustomerId(?Customer $customer): self
+    public function setCustomer(?Customer $customer): self
     {
         $this->customer = $customer;
 
@@ -85,36 +103,36 @@ class Address
         return $this;
     }
 
-    public function getCountryId(): ?Country
+    public function getCountry(): ?Country
     {
         return $this->country;
     }
 
-    public function setCountryId(?Country $country): self
+    public function setCountry(?Country $country): self
     {
         $this->country = $country;
 
         return $this;
     }
 
-    public function getCityId(): ?City
+    public function getCity(): ?City
     {
         return $this->city;
     }
 
-    public function setCityId(?City $city): self
+    public function setCity(?City $city): self
     {
         $this->city = $city;
 
         return $this;
     }
 
-    public function getDistrictId(): ?District
+    public function getDistrict(): ?District
     {
         return $this->district;
     }
 
-    public function setDistrictId(?District $district): self
+    public function setDistrict(?District $district): self
     {
         $this->district = $district;
 
@@ -143,5 +161,19 @@ class Address
         $this->updated_at = $updated_at;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id'            => $this->id,
+            'customer'      => $this->customer,
+            'full_address'  => $this->full_address,
+            'country'       => $this->country,
+            'city'          => $this->city,
+            'district'      => $this->district,
+            'created_at'    => $this->created_at,
+            'updated_at'    => $this->updated_at,
+        ];
     }
 }

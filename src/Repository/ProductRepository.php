@@ -14,8 +14,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ProductRepository extends ServiceEntityRepository
 {
-    public $productFillable = ['code', 'name', 'price', 'status','stock', 'created_at', 'updated_at'];
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Product::class);
@@ -23,8 +21,8 @@ class ProductRepository extends ServiceEntityRepository
 
     public function create($data)
     {
-        $product = new Product();
-        $fillable = $this->productFillable;
+        $product    = new Product();
+        $fillable   = $product->fillable;
         foreach ($data as $key => $value) {
             if (in_array($key, $fillable)){
                 $method = 'set'.$this->setterName($key);
@@ -41,7 +39,7 @@ class ProductRepository extends ServiceEntityRepository
 
     public function update(Product $product, $data)
     {
-        $fillable = $this->productFillable;
+        $fillable = $product->fillable;
 
         foreach ($data as $key => $value) {
             if (in_array($key, $fillable)){
@@ -59,7 +57,6 @@ class ProductRepository extends ServiceEntityRepository
 
     public function delete(Product $product)
     {
-        $this->findOneBy(['id' => 12]);
         $this->_em->remove($product);
         $this->_em->flush();
     }

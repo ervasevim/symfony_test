@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Order;
+use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,7 +19,54 @@ class OrderRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Order::class);
     }
+    public function create($data)
+    {
+        $order    = new Order();
+        $fillable   = $order->fillable;
 
+        foreach ($data as $key => $value) {
+            if (in_array($key, $fillable)){
+                $method = 'set'.$this->setterName($key);
+                if (!method_exists($order, $method))
+                    throw new \Exception('Something bad');
+                $order->$method($value);
+            }
+        }
+
+        $this->_em->persist($order);
+        $this->_em->flush();
+
+        return $order;
+    }
+
+    public function update(Order $order, $data)
+    {
+        $fillable = $order->fillable;
+
+        foreach ($data as $key => $value) {
+            if (in_array($key, $fillable)){
+                $method = 'set'.$this->setterName($key);
+                if (!method_exists($order, $method))
+                    throw new \Exception('Something bad');
+                $order->$method($value);
+            }
+        }
+
+        $this->_em->flush();
+
+        return $order;
+    }
+
+    public function delete(Order $order)
+    {
+        $this->_em->remove($order);
+        $this->_em->flush();
+    }
+
+    function setterName($string)
+    {
+        return  str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
+    }
     // /**
     //  * @return Order[] Returns an array of Order objects
     //  */

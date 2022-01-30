@@ -18,33 +18,26 @@ class OrderItemRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, OrderItem::class);
     }
-
-    // /**
-    //  * @return OrderItem[] Returns an array of OrderItem objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function create($data)
     {
-        return $this->createQueryBuilder('o')
-            ->andWhere('o.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('o.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $orderItem    = new OrderItem();
+        $fillable   = $orderItem->fillable;
+        foreach ($data as $key => $value) {
+            if (in_array($key, $fillable)){
+                $method = 'set'.$this->setterName($key);
+                if (!method_exists($orderItem, $method))
+                    throw new \Exception('Something bad');
+                $orderItem->$method($value);
+            }
+        }
+        $this->_em->persist($orderItem);
+        $this->_em->flush();
 
-    /*
-    public function findOneBySomeField($value): ?OrderItem
-    {
-        return $this->createQueryBuilder('o')
-            ->andWhere('o.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $orderItem;
     }
-    */
+
+    function setterName($string)
+    {
+        return  str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
+    }
 }

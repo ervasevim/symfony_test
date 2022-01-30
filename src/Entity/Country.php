@@ -6,11 +6,12 @@ use App\Repository\CountryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=CountryRepository::class)
  */
-class Country
+class Country implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -29,10 +30,6 @@ class Country
      */
     private $cities;
 
-    /**
-     * @ORM\OneToMany(targetEntity=District::class, mappedBy="country")
-     */
-    private $districts;
 
     public function __construct()
     {
@@ -69,7 +66,7 @@ class Country
     {
         if (!$this->cities->contains($city)) {
             $this->cities[] = $city;
-            $city->setCountryId($this);
+            $city->setCountry($this);
         }
 
         return $this;
@@ -79,8 +76,8 @@ class Country
     {
         if ($this->cities->removeElement($city)) {
             // set the owning side to null (unless already changed)
-            if ($city->getCountryId() === $this) {
-                $city->setCountryId(null);
+            if ($city->getCountry() === $this) {
+                $city->setCountry(null);
             }
         }
 
@@ -95,25 +92,11 @@ class Country
         return $this->districts;
     }
 
-    public function addDistrict(District $district): self
+    public function jsonSerialize()
     {
-        if (!$this->districts->contains($district)) {
-            $this->districts[] = $district;
-            $district->setCountry($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDistrict(District $district): self
-    {
-        if ($this->districts->removeElement($district)) {
-            // set the owning side to null (unless already changed)
-            if ($district->getCountry() === $this) {
-                $district->setCountry(null);
-            }
-        }
-
-        return $this;
+        return [
+            'id'    => $this->id,
+            'name'  => $this->name,
+            ];
     }
 }

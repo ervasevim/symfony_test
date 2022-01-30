@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
  */
-class Customer implements UserInterface, PasswordAuthenticatedUserInterface
+class Customer implements UserInterface, PasswordAuthenticatedUserInterface, \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -117,5 +117,13 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
          $this->password = '';
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id'        => $this->id,
+            'username'  => $this->username
+        ];
     }
 }

@@ -6,11 +6,12 @@ use App\Repository\CityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=CityRepository::class)
  */
-class City
+class City implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -57,12 +58,12 @@ class City
         return $this;
     }
 
-    public function getCountryId(): ?Country
+    public function getCountry(): ?Country
     {
         return $this->country;
     }
 
-    public function setCountryId(?Country $country): self
+    public function setCountry(?Country $country): self
     {
         $this->country = $country;
 
@@ -81,7 +82,7 @@ class City
     {
         if (!$this->districts->contains($district)) {
             $this->districts[] = $district;
-            $district->setCityId($this);
+            $district->setCity($this);
         }
 
         return $this;
@@ -91,11 +92,19 @@ class City
     {
         if ($this->districts->removeElement($district)) {
             // set the owning side to null (unless already changed)
-            if ($district->getCityId() === $this) {
-                $district->setCityId(null);
+            if ($district->getCity() === $this) {
+                $district->setCity(null);
             }
         }
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return[
+            'id'        => $this->id,
+            'name'      => $this->name,
+        ];
     }
 }

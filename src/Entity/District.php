@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=DistrictRepository::class)
  */
-class District
+class District implements \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -45,15 +45,23 @@ class District
         return $this;
     }
 
-    public function getCityId(): ?City
+    public function getCity(): ?City
     {
         return $this->city;
     }
 
-    public function setCityId(?City $city): self
+    public function setCity(?City $city): self
     {
         $this->city = $city;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id'    => $this->id,
+            'name'  => $this->name,
+        ];
     }
 }

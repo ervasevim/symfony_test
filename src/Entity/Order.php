@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=OrderRepository::class)
  * @ORM\Table(name="`order`")
  */
-class Order
+class Order implements \JsonSerializable
 {
     public $fillable = ['customer', 'address', 'code', 'shipping_date', 'total_price', 'status'];
 
@@ -45,7 +45,7 @@ class Order
     private $shipping_date;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", nullable= true)
      */
     private $total_price;
 
@@ -75,11 +75,11 @@ class Order
         $this->orderItems = new ArrayCollection();
     }
 
-    public function updateTimestamps():void
+    public function updateTimestamps(): void
     {
         $now = new \DateTimeImmutable();
         $this->setUpdatedAt($now);
-        if ($this->getCreatedAt() === null){
+        if ($this->getCreatedAt() === null) {
             $this->setCreatedAt($now);
         }
     }
@@ -89,24 +89,24 @@ class Order
         return $this->id;
     }
 
-    public function getCustomerId(): ?Customer
+    public function getCustomer(): ?Customer
     {
         return $this->customer;
     }
 
-    public function setCustomerId(?Customer $customer): self
+    public function setCustomer(?Customer $customer): self
     {
         $this->customer = $customer;
 
         return $this;
     }
 
-    public function getAddressId(): ?Address
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
 
-    public function setAddressId(?Address $address): self
+    public function setAddress(?Address $address): self
     {
         $this->address = $address;
 
@@ -173,7 +173,7 @@ class Order
     {
         if (!$this->orderItems->contains($orderItem)) {
             $this->orderItems[] = $orderItem;
-            $orderItem->setOrderId($this);
+            $orderItem->setOrder($this);
         }
 
         return $this;
@@ -183,8 +183,8 @@ class Order
     {
         if ($this->orderItems->removeElement($orderItem)) {
             // set the owning side to null (unless already changed)
-            if ($orderItem->getOrderId() === $this) {
-                $orderItem->setOrderId(null);
+            if ($orderItem->getOrder() === $this) {
+                $orderItem->setOrder(null);
             }
         }
 
@@ -213,5 +213,21 @@ class Order
         $this->updated_at = $updated_at;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return array(
+            'id'            => $this->id,
+            'customer'      => $this->customer,
+            'address'       => $this->address,
+            'code'          => $this->code,
+            'shipping_date' => $this->shipping_date,
+            'total_price'   => $this->total_price,
+            'status'        => $this->status,
+            'orderItems'    => $this->orderItems,
+            'created_at'    => $this->created_at,
+            'updated_at'    => $this->updated_at,
+        );
     }
 }
