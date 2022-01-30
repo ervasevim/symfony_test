@@ -26,7 +26,7 @@ class District
      * @ORM\ManyToOne(targetEntity=City::class, inversedBy="districts")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $city_id;
+    private $city;
 
     public function getId(): ?int
     {
@@ -47,12 +47,12 @@ class District
 
     public function getCityId(): ?City
     {
-        return $this->city_id;
+        return $this->city;
     }
 
-    public function setCityId(?City $city_id): self
+    public function setCityId(?City $city): self
     {
-        $this->city_id = $city_id;
+        $this->city = $city;
 
         return $this;
     }

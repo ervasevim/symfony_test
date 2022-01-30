@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Order
 {
+    public $fillable = ['customer', 'address', 'code', 'shipping_date', 'total_price', 'status'];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -24,13 +26,13 @@ class Order
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="orders")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $customer_id;
+    private $customer;
 
     /**
      * @ORM\ManyToOne(targetEntity=Address::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $address_id;
+    private $address;
 
     /**
      * @ORM\Column(type="string", length=15)
@@ -53,13 +55,33 @@ class Order
     private $status;
 
     /**
-     * @ORM\OneToMany(targetEntity=OrderItem::class, mappedBy="order_id", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=OrderItem::class, mappedBy="order", orphanRemoval=true)
      */
     private $orderItems;
 
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $created_at;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $updated_at;
+
     public function __construct()
     {
+        $this->updateTimestamps();;
         $this->orderItems = new ArrayCollection();
+    }
+
+    public function updateTimestamps():void
+    {
+        $now = new \DateTimeImmutable();
+        $this->setUpdatedAt($now);
+        if ($this->getCreatedAt() === null){
+            $this->setCreatedAt($now);
+        }
     }
 
     public function getId(): ?int
@@ -69,24 +91,24 @@ class Order
 
     public function getCustomerId(): ?Customer
     {
-        return $this->customer_id;
+        return $this->customer;
     }
 
-    public function setCustomerId(?Customer $customer_id): self
+    public function setCustomerId(?Customer $customer): self
     {
-        $this->customer_id = $customer_id;
+        $this->customer = $customer;
 
         return $this;
     }
 
     public function getAddressId(): ?Address
     {
-        return $this->address_id;
+        return $this->address;
     }
 
-    public function setAddressId(?Address $address_id): self
+    public function setAddressId(?Address $address): self
     {
-        $this->address_id = $address_id;
+        $this->address = $address;
 
         return $this;
     }
@@ -165,6 +187,30 @@ class Order
                 $orderItem->setOrderId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updated_at): self
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }

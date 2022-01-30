@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Product implements \JsonSerializable
 {
-    //public $fillable = ['code', 'name', 'price', 'status','stock', 'created_at', 'updated_at'];
+    public $fillable = ['code', 'name', 'price', 'status','stock', 'created_at', 'updated_at'];
 
     /**
      * @ORM\Id

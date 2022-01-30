@@ -21,7 +21,7 @@ class Address
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="addresses")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $customer_id;
+    private $customer;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -32,19 +32,19 @@ class Address
      * @ORM\ManyToOne(targetEntity=Country::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $country_id;
+    private $country;
 
     /**
      * @ORM\ManyToOne(targetEntity=City::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $city_id;
+    private $city;
 
     /**
      * @ORM\ManyToOne(targetEntity=District::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $district_id;
+    private $district;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -61,14 +61,14 @@ class Address
         return $this->id;
     }
 
-    public function getCustomerId(): ?Customer
+    public function getCustomer(): ?Customer
     {
-        return $this->customer_id;
+        return $this->customer;
     }
 
-    public function setCustomerId(?Customer $customer_id): self
+    public function setCustomerId(?Customer $customer): self
     {
-        $this->customer_id = $customer_id;
+        $this->customer = $customer;
 
         return $this;
     }
@@ -87,36 +87,36 @@ class Address
 
     public function getCountryId(): ?Country
     {
-        return $this->country_id;
+        return $this->country;
     }
 
-    public function setCountryId(?Country $country_id): self
+    public function setCountryId(?Country $country): self
     {
-        $this->country_id = $country_id;
+        $this->country = $country;
 
         return $this;
     }
 
     public function getCityId(): ?City
     {
-        return $this->city_id;
+        return $this->city;
     }
 
-    public function setCityId(?City $city_id): self
+    public function setCityId(?City $city): self
     {
-        $this->city_id = $city_id;
+        $this->city = $city;
 
         return $this;
     }
 
     public function getDistrictId(): ?District
     {
-        return $this->district_id;
+        return $this->district;
     }
 
-    public function setDistrictId(?District $district_id): self
+    public function setDistrictId(?District $district): self
     {
-        $this->district_id = $district_id;
+        $this->district = $district;
 
         return $this;
     }

@@ -21,13 +21,13 @@ class OrderItem
      * @ORM\ManyToOne(targetEntity=Order::class, inversedBy="orderItems")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $order_id;
+    private $order;
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $product_id;
+    private $product;
 
     /**
      * @ORM\Column(type="float")
@@ -46,24 +46,24 @@ class OrderItem
 
     public function getOrderId(): ?Order
     {
-        return $this->order_id;
+        return $this->order;
     }
 
-    public function setOrderId(?Order $order_id): self
+    public function setOrderId(?Order $order): self
     {
-        $this->order_id = $order_id;
+        $this->order = $order;
 
         return $this;
     }
 
     public function getProductId(): ?Product
     {
-        return $this->product_id;
+        return $this->product;
     }
 
-    public function setProductId(?Product $product_id): self
+    public function setProductId(?Product $product): self
     {
-        $this->product_id = $product_id;
+        $this->product = $product;
 
         return $this;
     }

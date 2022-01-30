@@ -28,10 +28,10 @@ class City
      * @ORM\ManyToOne(targetEntity=Country::class, inversedBy="cities")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $country_id;
+    private $country;
 
     /**
-     * @ORM\OneToMany(targetEntity=District::class, mappedBy="city_id", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=District::class, mappedBy="city", orphanRemoval=true)
      */
     private $districts;
 
@@ -59,12 +59,12 @@ class City
 
     public function getCountryId(): ?Country
     {
-        return $this->country_id;
+        return $this->country;
     }
 
-    public function setCountryId(?Country $country_id): self
+    public function setCountryId(?Country $country): self
     {
-        $this->country_id = $country_id;
+        $this->country = $country;
 
         return $this;
     }

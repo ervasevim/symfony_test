@@ -25,13 +25,19 @@ class Country
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=City::class, mappedBy="country_id", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=City::class, mappedBy="country", orphanRemoval=true)
      */
     private $cities;
+
+    /**
+     * @ORM\OneToMany(targetEntity=District::class, mappedBy="country")
+     */
+    private $districts;
 
     public function __construct()
     {
         $this->cities = new ArrayCollection();
+        $this->districts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -75,6 +81,36 @@ class Country
             // set the owning side to null (unless already changed)
             if ($city->getCountryId() === $this) {
                 $city->setCountryId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|District[]
+     */
+    public function getDistricts(): Collection
+    {
+        return $this->districts;
+    }
+
+    public function addDistrict(District $district): self
+    {
+        if (!$this->districts->contains($district)) {
+            $this->districts[] = $district;
+            $district->setCountry($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDistrict(District $district): self
+    {
+        if ($this->districts->removeElement($district)) {
+            // set the owning side to null (unless already changed)
+            if ($district->getCountry() === $this) {
+                $district->setCountry(null);
             }
         }
 
