@@ -225,7 +225,7 @@ class Order implements \JsonSerializable
             'shipping_date' => $this->shipping_date,
             'total_price'   => $this->total_price,
             'status'        => $this->status,
-            'orderItems'    => $this->orderItems,
+            'orderItems'    => $this->orderItems->toArray(),
             'created_at'    => $this->created_at,
             'updated_at'    => $this->updated_at,
         );

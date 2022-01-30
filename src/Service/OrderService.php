@@ -56,6 +56,7 @@ class OrderService
                 $order->removeOrderItem($orderItem);
             }
             $data['order_item'] = $this->orderItemService->createOrderItem($data);
+            $order = $this->orderRepository->update($data['order'],['total_price' => $data['order_item']['total_price']]);
         }
         return $order;
     }
